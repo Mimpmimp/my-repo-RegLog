@@ -10,42 +10,33 @@ function LoginRegister() {
     setIsSignUp((prevState) => !prevState);
   };
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [fldUsername, setfldUsername] = useState("");
+  const [fldPassword, setfldPassword] = useState("");
   const navigate = useNavigate()
 
   function register(event){
     event.preventDefault()
-    axios.post("http://localhost:8001/register", { username, email, password }, {
-      headers: {
+    axios.post("http://192.168.1.29:5000/api/add_user", { fldUsername, fldPassword }, {
+      headers: {  
         "Content-Type": "application/json",
       }
     })
-    .then(res => {
+    .then(response => {
       navigate("/home");
     })
-    .catch(err => console.log(err))
+    .catch((err) => {
+      console.error("error during signup: ",err)
+    })
   }
 
-  const [values, setValues] = useState({
-    email:"",
-    password:""
-  })
+  
   function login(event) {
     event.preventDefault();
-    axios.post("http://localhost:8001/login", values, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
+
+    axios.post("http://192.168.1.29:5000/auth/login", {fldUsername,fldPassword})
     .then(res => {
-      if (res.data.status === "Success") {
-        navigate("/home");
-      } else {
-        alert("Error: " + res.data.error);
-        console.log(res.data.error);
-      }
+      console.log('Login Successful: ', res)
+      navigate('/home')
     })
     .catch(err => {
       console.log("Request error: ", err);
@@ -65,9 +56,8 @@ function LoginRegister() {
             <a href="#" className="icon"><i className="fa-brands fa-linkedin-in"></i></a>
           </div>
           <span>or use your email for registration</span>
-          <input type="text" placeholder="Name" onChange={e => setUsername(e.target.value)}/>
-          <input type="email" placeholder="Email" onChange={e => setEmail(e.target.value)}/>
-          <input type="password" placeholder="Password" onChange={e => setPassword(e.target.value)}/>
+          <input type="text" placeholder="Name" onChange={e => setfldUsername(e.target.value)}/>
+          <input type="password" placeholder="Password" onChange={e => setfldPassword(e.target.value)}/>
           <button type="submit">Sign Up</button>
         </form>
       </div>
@@ -82,9 +72,12 @@ function LoginRegister() {
             <a href="#" className="icon"><i className="fa-brands fa-github"></i></a>
             <a href="#" className="icon"><i className="fa-brands fa-linkedin-in"></i></a>
           </div>
-          <span>or use your email password</span>
-          <input type="email" placeholder="Email" onChange={e => setValues({...values,email:e.target.value})}/>
-          <input type="password" placeholder="Password" onChange={e => setValues({...values,password:e.target.value})}/>
+          <span>or use your user password</span>
+          <input type="username" 
+          placeholder="Username" 
+          onChange={e => setfldUsername(e.target.value)}/>
+
+          <input type="password" placeholder="Password" onChange={e => setfldPassword(e.target.value)}/>
           <a href="#">Forget Your Password?</a>
           <button type="submit">Sign In</button>
         </form>
